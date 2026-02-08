@@ -330,6 +330,8 @@ Fl_File_Chooser::~Fl_File_Chooser() {
   if(ext_group)window->remove(ext_group);
   delete window;
   delete favWindow;
+  if ( (flags_ & AUTO_DELETE_USER_DATA) && data_)
+    delete (Fl_Callback_User_Data*)data_;
 }
 
 void Fl_File_Chooser::callback(void (*cb)(Fl_File_Chooser *, void *), void *d ) {
@@ -445,6 +447,18 @@ void * Fl_File_Chooser::user_data() const {
 
 void Fl_File_Chooser::user_data(void *d) {
   data_ = d;
+}
+
+/*
+ \brief Sets the user data for this widget.
+ Sets the new user data (void *) argument that is passed to the callback function.
+ \param[in] v new user data
+ \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
+ */
+void Fl_File_Chooser::user_data(Fl_Callback_User_Data* v, bool auto_free) {
+  user_data((void*)v);
+  if (auto_free)
+    set_flag(AUTO_DELETE_USER_DATA);
 }
 
 int Fl_File_Chooser::visible() {

@@ -74,7 +74,8 @@ class FL_EXPORT Fl_Tree_Item {
     OPEN                = 1<<0,         ///> item is open
     VISIBLE             = 1<<1,         ///> item is visible
     ACTIVE              = 1<<2,         ///> item is active
-    SELECTED            = 1<<3          ///> item is selected
+    SELECTED            = 1<<3,         ///> item is selected
+    AUTO_DELETE_USER_DATA = 1<<4        ///< automatically call `delete` on the user_data pointer when destroying this widget; if set, user_data must point to a class derived from the class Fl_Callback_User_Data
   };
   unsigned short _flags;                // misc flags
   int                     _xywh[4];             // xywh of this widget (if visible)
@@ -136,6 +137,9 @@ public:
 
   /// Set a user-data value for the item.
   inline void user_data( void* data ) { _userdata = data; }
+
+  /// Sets the user data for this widget.
+  void user_data(Fl_Callback_User_Data* v, bool auto_free);
 
   /// Retrieve the user-data value that has been assigned to the item.
   inline void* user_data() const { return _userdata; }

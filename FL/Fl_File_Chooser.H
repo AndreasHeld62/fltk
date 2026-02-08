@@ -95,6 +95,7 @@ private:
   static void cb_fileList(Fl_File_Browser*, void*);
   Fl_Box *errorBox;
   Fl_Box *previewBox;
+  unsigned int flags_;
 public:
   Fl_Check_Button *previewButton;
 private:
@@ -136,6 +137,17 @@ private:
 public:
   ~Fl_File_Chooser();
   void callback(void (*cb)(Fl_File_Chooser *, void *), void *d = 0);
+    /** Sets the current callback function and managed user data for the widget.
+   Setting auto_free will transfer ownership of the callback user data to the
+   widget. Deleting the widget will then also delete the user data.
+   \param[in] cb new callback
+   \param[in] p user data
+   \param[in] auto_free if set, the widget will free user data when destroyed
+   */
+  void callback(void (*cb)(Fl_File_Chooser *, void *), Fl_Callback_User_Data* p, bool auto_free) {
+    callback_ = cb;
+    user_data(p, auto_free);
+  }
   void color(Fl_Color c);
   Fl_Color color();
   int count();
@@ -172,6 +184,8 @@ public:
   int type();
   void * user_data() const;
   void user_data(void *d);
+  /** \brief Sets the user data for this widget. */
+  void user_data(Fl_Callback_User_Data* v, bool auto_free);
   const char *value(int f = 1);
   void value(const char *filename);
   int visible();
@@ -243,6 +257,17 @@ public:
    the contents of a directory.
   */
   static Fl_File_Sort_F *sort;
+protected:
+  /** Gets the widget flags mask */
+  unsigned int flags() const {return flags_;}
+  /** Sets a flag in the flags mask */
+  void set_flag(unsigned int c) {flags_ |= c;}
+  /** Clears a flag in the flags mask */
+  void clear_flag(unsigned int c) {flags_ &= ~c;}
+  /** flags possible values enumeration. */
+  enum {
+        AUTO_DELETE_USER_DATA = 1<<23, ///< automatically call `delete` on the user_data pointer when destroying this widget; if set, user_data must point to a class derived from the class Fl_Callback_User_Data
+  };
 private:
   Fl_Widget* ext_group;
 public:

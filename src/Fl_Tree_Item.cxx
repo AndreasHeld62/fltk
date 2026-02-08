@@ -102,6 +102,8 @@ Fl_Tree_Item::~Fl_Tree_Item() {
   if ( _tree && this == _tree->_item_focus )
     { _tree->_item_focus = 0; }
   //_children.clear();          // array's destructor handles itself
+  if ( (_flags & AUTO_DELETE_USER_DATA) && _userdata)
+    delete (Fl_Callback_User_Data*)_userdata;
 }
 
 /// Copy constructor.
@@ -1479,4 +1481,16 @@ int Fl_Tree_Item::is_visible_r() const {
 ///
 void Fl_Tree_Item::recalc_tree() {
   _tree->recalc_tree();
+}
+
+/*
+ \brief Sets the user data for this widget.
+ Sets the new user data (void *) argument that is passed to the callback function.
+ \param[in] v new user data
+ \param[in] auto_free if set, the widget will free user data when destroyed; defaults to false
+ */
+void Fl_Tree_Item::user_data(Fl_Callback_User_Data* v, bool auto_free) {
+  user_data((void*)v);
+  if (auto_free)
+    set_flag(AUTO_DELETE_USER_DATA, 1);
 }
